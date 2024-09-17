@@ -6,7 +6,7 @@ import static_token_div.algorithms.w2v as w2v
 import time
 
 text_path = "../resources/tlnl_tp1_data/alexandre_dumas/Le_comte_de_Monte_Cristo.tok"
-embedding_path = "embedding_generated.txt"
+embedding_path = "../test/embedding_generated.txt"
 
 L = 2  # number of positive and negative word context between target word
 minc = 10  # number of minimal take occurrence to take as target word
