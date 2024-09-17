@@ -6,12 +6,14 @@ import time
 class TestTools(TestCase):
     def test_embedding_sentence(self):
         print("TEST test_embedding_sentence")
+        start = time.time()
+        print("\tStarting embedding creation extraction process ...")
+
         text_path = "../resources/tlnl_tp1_data/alexandre_dumas/Le_comte_de_Monte_Cristo.tok"
         L=2
         minc=10
-        start = time.time()
-        print("\tStarting embedding creation extraction process ...")
-        result = tools.embedding_sentence(
+
+        result = tools.get_embedding_sentence(
             L=L,
             minc=minc,
             text_path=text_path
@@ -47,3 +49,9 @@ class TestTools(TestCase):
 
         self.assertTrue(occurences["<s>"] == 19027)
         self.assertTrue(occurences["</s>"] == 19024)
+
+    def test_break_list_for_txt(self):
+        sentence = ['février', '1815', ',', 'la', 'vigie']
+
+        result = tools.break_list_for_txt(sentence)
+        self.assertTrue(result == "février 1815 , la vigie")

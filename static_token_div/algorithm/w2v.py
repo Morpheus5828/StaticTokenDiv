@@ -2,22 +2,21 @@
 .module author:: Marius THORRE
 """
 
+from static_token_div.tools.tools import get_embedding_sentence, break_list_for_txt
+
 
 def embedding_generator(
-    text: str,
-    n: int,
+    save_path: str,
+    text_path: str,
     L: int,
-    k: int,
-    eta: float,
-    e: int,
     minc: int
 
 ) -> None:
     """
     Embedding generator file
 
-    :param text: text to apply embeddings
-    :param n: embeddings dimensions
+    :param save_path:
+    :param text_path: text to apply embeddings
     :param L: right and left context size, windows size is equal to 2*L + 1
     :param k: negative nb context for a positive context
     :param eta: learning rate
@@ -25,14 +24,18 @@ def embedding_generator(
     :param minc: minimal occurrence number 
     :return: None
     """
-    text_split = text.split(" ") # split text by space between word
-    text_embedding = []
-    for i in range(1, len(text_split)):
-        print("target: ", text_split[i])
-        for j in range(-L, L+1):
-            if i != 1 or i == len(text_split) -2:
-                print(text_split[i+j], end=" ")
-        print()
+    text_embedding = get_embedding_sentence(
+        text_path=text_path,
+        L=L,
+        minc=minc
+    )
+    embedding_to_save = ""
+    for embedding in text_embedding:
+        embedding_to_save += break_list_for_txt(embedding) + "\n"
+
+    with open(save_path, "w", encoding='utf-8') as f:
+        f.write(embedding_to_save)
+
 
 
 def classifier(

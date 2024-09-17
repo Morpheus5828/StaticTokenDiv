@@ -54,6 +54,16 @@ def get_text(text_path: str) -> list:
     return text
 
 
+def break_list_for_txt(embedding: list) -> str:
+    result = ""
+    for index, word in enumerate(embedding):
+        if index == len(embedding) - 1:
+            result += word
+        else:
+            result += word + " "
+    return result
+
+
 def create_vocabulary(all_text: list) -> set:
     vocab = set()
     for word in all_text:
@@ -61,7 +71,7 @@ def create_vocabulary(all_text: list) -> set:
     return vocab
 
 
-def embedding_sentence(
+def get_embedding_sentence(
     L: int,
     minc: int,
     text_path: str,
