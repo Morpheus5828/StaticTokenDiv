@@ -1,11 +1,28 @@
 from unittest import TestCase
 from static_token_div.tools import tools
 import time
-import tqdm
+
 
 class TestTools(TestCase):
     def test_embedding_sentence(self):
-        L = 2
+        print("TEST test_embedding_sentence")
+        text_path = "../resources/tlnl_tp1_data/alexandre_dumas/Le_comte_de_Monte_Cristo.tok"
+        L=2
+        minc=10
+        start = time.time()
+        print("\tStarting embedding creation extraction process ...")
+        result = tools.embedding_sentence(
+            L=L,
+            minc=minc,
+            text_path=text_path
+        )
+        end = time.time()
+
+        print(f"\tVocab creation process time: {end - start:.2f} s")
+
+        self.assertTrue(result[0] == ['février', '1815', ',', 'la', 'vigie'])
+        self.assertTrue(result[1] == ['le', 'pharaon', ',', 'venant', 'de'])
+        self.assertTrue(len(result) == 184581) #nb of embedding available
 
     def test_create_vocabulary(self):
         print("TEST test_create_vocabulary")

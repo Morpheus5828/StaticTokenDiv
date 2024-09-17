@@ -1,5 +1,5 @@
 import numpy as np
-
+from tqdm import tqdm
 
 def sigmoid(
     m: np.ndarray,
@@ -22,6 +22,24 @@ def get_word_occurrence(
     return text.count(word)
 
 
+def get_text_word_occurence(
+    all_text: list
+) -> dict:
+    vocab = create_vocabulary(all_text)
+    occurences = {}
+    for word in vocab:
+        occurences[word] = get_word_occurrence(word=word, text=all_text)
+
+    return dict(sorted(occurences.items(), key=lambda item: item[1], reverse=True))
+
+
+def filter_occurence(
+    occurencies: dict,
+    step: int
+) -> dict:
+    return {word: occurence for word, occurence in occurencies.items() if occurence > step}
+
+
 def get_text(text_path: str) -> list:
     text = []
     with open(text_path, "r", encoding='utf-8') as vocab_file:
@@ -32,6 +50,7 @@ def get_text(text_path: str) -> list:
             # extract all word and add them into text list
             for word in tab_words:
                 text.append(word)
+
     return text
 
 
@@ -45,28 +64,29 @@ def create_vocabulary(all_text: list) -> set:
 def embedding_sentence(
     L: int,
     minc: int,
-    text: list
+    text_path: str,
+    word_except: list = ["<s>", "</s>"]
 ) -> list:
-
-
-    pass
-
-
-    # all_embedding = []
-    # for i in range(L, len(sentence)-L-1):
-    #     if minc is not None and text is not None:
-    #         if get_word_occurrence(word=sentence[i], text=text) >= minc:
-    #             current_embedding = []
-    #             for j in range(-L, L+1):
-    #                 current_embedding.append(sentence[i+j])
-    #             all_embedding.append(current_embedding)
-    #     else:
-    #         current_embedding = []
-    #         for j in range(-L, L+1):
-    #             current_embedding.append(sentence[i+j])
-    #         all_embedding.append(current_embedding)
-    #
-    # return all_embedding
+    # create vocabulary from text
+    all_text = get_text(text_path)
+    vocab = create_vocabulary(all_text)
+    # compute all words occurence in text
+    occurencies = get_text_word_occurence(all_text)
+    # keep cocurence which appears than minc time in all_text
+    occurencies = filter_occurence(occurencies, step=minc)
+    # create embedding from main occurencies words
+    all_embedding = []
+    for current_word in occurencies.keys():
+        for word_index in range(len(all_text)):
+            if current_word == all_text[word_index] and (current_word not in word_except):
+                current_embedding = []
+                for i in range(-L, L+1):
+                    try:
+                        current_embedding.append(all_text[word_index+i])
+                    except:
+                        print(f"Error detected when created embedding")
+                all_embedding.append(current_embedding)
+    return all_embedding
 
 
 
