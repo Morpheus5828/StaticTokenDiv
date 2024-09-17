@@ -16,32 +16,57 @@ def sigmoid(
 
 
 def get_word_occurrence(
-    text: str,
+    text: list,
     word: str
 ) -> int:
     return text.count(word)
 
 
-def embedding_sentence(
-    sentence: list,
-    n: int,
-    L: int,
-    k: int,
-) -> list:
-    empty_line = ["" for _ in range(n)]
-    all_embedding = [empty_line for _ in range(len(sentence)-2)]
-    target_index = 1
-    for i in range(len(sentence)-2):
-        for j in range(-L, L):
-            if target_index + j > 0:
-                #print(target_index+)
-                all_embedding[i].append(sentence[target_index + j])
-                print(all_embedding)
-                print("####")
-                #print(sentence[target_index + j], end=" ")
-        target_index += 1
+def get_text(text_path: str) -> list:
+    text = []
+    with open(text_path, "r", encoding='utf-8') as vocab_file:
+        for line in vocab_file:
+            tab_words = line.split(" ")
+            # remove indent symbol
+            tab_words = list(map(lambda x: x.replace('</s>\n', '</s>'), tab_words))
+            # extract all word and add them into text list
+            for word in tab_words:
+                text.append(word)
+    return text
 
-    return all_embedding
+
+def create_vocabulary(all_text: list) -> set:
+    vocab = set()
+    for word in all_text:
+        vocab.add(word)
+    return vocab
+
+
+def embedding_sentence(
+    L: int,
+    minc: int,
+    text: list
+) -> list:
+
+
+    pass
+
+
+    # all_embedding = []
+    # for i in range(L, len(sentence)-L-1):
+    #     if minc is not None and text is not None:
+    #         if get_word_occurrence(word=sentence[i], text=text) >= minc:
+    #             current_embedding = []
+    #             for j in range(-L, L+1):
+    #                 current_embedding.append(sentence[i+j])
+    #             all_embedding.append(current_embedding)
+    #     else:
+    #         current_embedding = []
+    #         for j in range(-L, L+1):
+    #             current_embedding.append(sentence[i+j])
+    #         all_embedding.append(current_embedding)
+    #
+    # return all_embedding
 
 
 
