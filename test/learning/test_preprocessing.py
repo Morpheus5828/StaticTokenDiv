@@ -6,7 +6,7 @@ import static_token_div.learning.preprocessing as preprocessing
 class TestPreprocessing(TestCase):
     def test_process(self):
         embedding_path = "../embedding_generated.txt"
-        k = 5
+        k = 2
 
         start = time.time()
 

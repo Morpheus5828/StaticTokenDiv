@@ -24,19 +24,20 @@ def process(
             embeddings.append(line)
 
     y = np.ones(len(embeddings))
-    print(y.shape)
 
     positive_context = embeddings
     negative_context = []
     negative_context_label = []
-    # create false context:
+    # create negative context:
     for line in embeddings:
-        target = len(line) // 2 + 1
+        target = line[len(line) // 2]
         i = 0
         while i < k:
             random_value = random.randint(0, len(embeddings) -1)
-            if embeddings[random_value][len(line) // 2 + 1] != target:
-                negative_context.append(embeddings[random_value])
+
+            if embeddings[random_value][len(line) // 2] != target:
+                negative_embedding = embeddings[random_value][len(line) // 2] = target
+                negative_context.append(negative_embedding)
                 negative_context_label.append(-1)
                 i +=1
 
