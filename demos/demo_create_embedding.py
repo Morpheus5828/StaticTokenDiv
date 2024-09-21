@@ -9,7 +9,7 @@ text_path = "../resources/tlnl_tp1_data/alexandre_dumas/Le_comte_de_Monte_Cristo
 embedding_path = "../test/embedding_generated.txt"
 
 L = 2  # number of positive and negative word context between target word
-minc = 10  # number of minimal take occurrence to take as target word
+minc = 5  # number of minimal take occurrence to take as target word
 word_except = ["<s>", "</s>", ".", ",", "?", "!"]  # exception word, not take as target word
 
 start = time.time()
@@ -20,8 +20,7 @@ w2v.embedding_generator(
     save_path=embedding_path,
     text_path=text_path,
     L=L,
-    minc=minc,
-    word_except=word_except
+    minc=minc
 )
 
 end = time.time()
