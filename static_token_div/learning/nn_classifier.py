@@ -1,72 +1,109 @@
 """This script is a classification learning program using neural network,
-the goal is to predict if word context is positive or negative
+the goal is to predict if word context is positive or negative like word2vec
 .module author::Marius THORRE
 """
-# https://otmaneboughaba.com/posts/Word2Vec-in-Pytorch/
+import time
 import torch
 import torch.nn as nn
-import torch.optim as optim
-from torch.utils.data import Dataset, DataLoader
+from torch.nn.functional import relu, sigmoid, softmax
+from torch.utils.data import random_split, TensorDataset
+from torchvision import datasets, transforms
+from torch.utils.data import DataLoader
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from static_token_div.learning.preprocessing import extract_context, create_learning_data
+import warnings
+
+start = time.time()
+
+print(f"\n\tStarting learning process")
+
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+print('\tUsing gpu: %s ' % torch.cuda.is_available())
+
+train_context_path = "train.txt"
+test_context_path = "test.txt"
+
+positive_context, negative_context = extract_context(context_file_path=train_context_path)
+X_train, y_train = create_learning_data(positive_context, negative_context)
+
+positive_context, negative_context = extract_context(context_file_path=test_context_path)
+X_test, y_test = create_learning_data(positive_context, negative_context)
+
+print(f"\tTraining input shape: {X_train.shape}, training target shape: {y_train.shape}")
+print(f"\tTraining input shape: {X_train.shape}, training target shape: {y_train.shape}")
 
 
-class EmbeddingDataset(Dataset):
-    def __init__(self, train_data, test_data):
-        self.train_data = train_data
-        self.test_data = test_data
-
-    def __getitem__(self, index):
-        context = train_data[:][0]
-        target = train_data[:][1]
-
-        return context, target
-
-
-class Loss(nn.Module):
-    def __init__(self):
-        super(Loss, self).__init__()
-
-    def forward(self, m, c_pos, c_neg):
-        loss = -(
-                torch.log(torch.sigmoid(torch.dot(m, c_pos))) +
-                torch.sum(torch.log(torch.sigmoid(torch.dot(-m, c_neg))))
-        )
-        return loss
-
-
-class ClassifierWord2Vec(nn.Module):
-    def __init__(self, input_dim):
-        super(ClassifierWord2Vec, self).__init__()
-        self.l1 = nn.Linear(input_dim, 100)
-        self.l2 = nn.Linear(100, 1)
+class BinaryClassifier(nn.Module):
+    def __init__(self, input_size, embed_size):
+        super(BinaryClassifier, self).__init__()
+        self.linear1 = torch.nn.Linear(input_size, embed_size)
+        self.linear2 = torch.nn.Linear(embed_size, 2)
 
     def forward(self, x):
-        x = self.l1(x)
-        x = self.l2(x)
+        x = self.linear1(x)
+        x = relu(x)
+        x = self.linear2(x)
         return x
 
 
-if __name__ == "__main__":
-    #TODO train data, test data
-    #TODO a configurer
-    # train_data = torch.tensor(0)
-    # test_data = torch.tensor(0)
-    # input_dim = 0
-    #
-    # dataset = EmbeddingDataset(train_data=train_data, test_data=test_data)
-    # dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
-    #
-    # device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    # embedding_size = 5
-    # model = ClassifierWord2Vec(input_dim=input_dim)
-    # model.to(device)
-    #
-    # optimizer = optim.Adam(model.parameters(), lr=1e-3)
-    # loss = Loss()
-    #
-    # epochs = 10
-    #
-    # for epoch in range(epochs):
-    #     running_loss = 0
-    #     for batch,
+def loss(output, target_pos, negative_samples):
+    positive_score = torch.matmul(output, target_pos.t())
 
-    pass
+    negative_score = torch.bmm(negative_samples, output.unsqueeze(2)).squeeze()
+
+    pos_loss = torch.log(sigmoid(positive_score))
+    neg_loss = torch.sum(torch.log(sigmoid(-negative_score)), dim=1)
+
+    total_loss = -(pos_loss + neg_loss).mean()
+    return total_loss
+
+num_epochs = 10
+batch_size = 32
+learning_rate = 0.01
+
+X_train = torch.tensor(X_train).float()
+y_train = torch.tensor(y_train).long()
+X_test = torch.tensor(X_test).float()
+y_test = torch.tensor(y_test).long()
+
+train_dataset = TensorDataset(X_train, y_train)
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+
+test_dataset = TensorDataset(X_test, y_test)
+test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+
+embedding_size = 5
+model = BinaryClassifier(input_size=2, embed_size=embedding_size)
+optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
+model.to(device)
+
+loss_fn = nn.CrossEntropyLoss()
+
+epochs = 300
+
+loss_values = []
+for epoch in range(epochs):
+    running_loss = 0.0
+    model.train()
+    for batch, (context, target) in enumerate(train_loader):
+        context = context.to(device)
+        target = target.to(device)
+        optimizer.zero_grad()
+        pred = model(context)
+        loss = loss_fn(pred, target)
+        running_loss += loss.item()
+        loss.backward()
+        optimizer.step()
+
+    epoch_loss = running_loss/len(train_loader)
+    if (epoch+1) % 10 == 0:
+        print(f"Epoch [{epoch + 1}/{epochs}], Loss: {epoch_loss}")
+
+    loss_values.append(epoch_loss)
+
+print("Training complete.")
+
+end = time.time()
+print(f"\n\tCreation process time: {end - start:.2f} s")

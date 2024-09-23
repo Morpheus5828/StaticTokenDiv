@@ -6,7 +6,7 @@ from static_token_div.algorithms import w2v
 import numpy as np
 
 
-def process(
+def extract_context(
         context_file_path: str,
 ) -> tuple:
     """
@@ -35,3 +35,17 @@ def process(
     negative_context = np.array(negative_context)
 
     return positive_context, negative_context
+
+
+def create_learning_data(
+        positive_context: np.ndarray,
+        negative_context: np.ndarray
+) -> tuple:
+    input_data = np.concatenate((positive_context, negative_context))
+    target_data = np.concatenate((np.zeros(positive_context.shape[0]), np.ones(negative_context.shape[0])))
+
+    return input_data, target_data
+
+
+
+

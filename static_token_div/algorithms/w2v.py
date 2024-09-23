@@ -1,5 +1,5 @@
 """ This script is an embedding file generator
-.module author:: Marius THORRE
+.module author:: Marius THORRE, Thomas CELESCHI
 """
 
 import static_token_div.tools.tools as tools
@@ -10,8 +10,6 @@ def embedding_generator(
     text_path: str,
     L: int,
     k: int,
-    eta: int,
-    e: int,
     minc: int,
     word_except: list
 
@@ -31,6 +29,7 @@ def embedding_generator(
 
     text = tools.get_text(text_path)
     vocab = tools.create_vocabulary(text)
+    print(f"\t Vocab size: {len(vocab)}")
     occurrences = tools.get_occurrences(text, vocab, minc)
     embeddings = tools.create_embeddings(text, vocab, occurrences, L, word_except)
     pos_context = tools.create_pos_context(embeddings, vocab)

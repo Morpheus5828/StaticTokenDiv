@@ -5,13 +5,11 @@
 import static_token_div.algorithms.w2v as w2v
 import time
 
-text_path = "../resources/tlnl_tp1_data/alexandre_dumas/Le_comte_de_Monte_Cristo.tok"
-embedding_path = "../test/context_generated.txt"
+text_path = "../resources/tlnl_tp1_data/alexandre_dumas/Le_comte_de_Monte_Cristo.train.tok"
+embedding_path = "../static_token_div/learning/train.txt"
 
 L = 2  # number of positive and negative word context between target word
 k = 2  # number of neg context for 1 pos context
-eta = 0  # learning rate
-e = 0  # nb iteration
 minc = 5  # number of minimal take occurrence to take as target word
 word_except = ["<s>", "</s>"]  # exception word, not take as target word
 
@@ -24,8 +22,6 @@ w2v.embedding_generator(
     text_path=text_path,
     L=L,
     k=k,
-    eta=eta,
-    e=e,
     minc=minc,
     word_except=word_except
 )

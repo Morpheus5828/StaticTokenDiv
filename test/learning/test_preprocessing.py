@@ -9,7 +9,7 @@ class TestPreprocessing(TestCase):
 
         start = time.time()
 
-        positive_context, negative_context = preprocessing.process(context_file_path=context_path)
+        positive_context, negative_context = preprocessing.extract_context(context_file_path=context_path)
         self.assertTrue(positive_context.shape == (229422, 2))
         self.assertTrue(negative_context.shape == (451275, 2))
 
