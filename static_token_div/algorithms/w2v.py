@@ -2,15 +2,18 @@
 .module author:: Marius THORRE
 """
 
-from static_token_div.tools.tools import get_embedding_sentence, break_list_for_txt
+import static_token_div.tools.tools as tools
 
 
 def embedding_generator(
     save_path: str,
     text_path: str,
     L: int,
+    k: int,
+    eta: int,
+    e: int,
     minc: int,
-    word_except: list = ["<s>", "</s>"]
+    word_except: list
 
 ) -> None:
     """
@@ -25,24 +28,25 @@ def embedding_generator(
     :param word_except: word except, will not appear as embedding target
     :return: None
     """
-    text_embedding = get_embedding_sentence(
-        text_path=text_path,
-        L=L,
-        minc=minc,
-        word_except=word_except
-    )
-    embedding_to_save = ""
-    for embedding in text_embedding:
-        embedding_to_save += break_list_for_txt(embedding) + "\n"
 
-    print(f"\tFile contains: {len(text_embedding)} lines")
+    text = tools.get_text(text_path)
+    vocab = tools.create_vocabulary(text)
+    occurrences = tools.get_occurrences(text, vocab, minc)
+    embeddings = tools.create_embeddings(text, vocab, occurrences, L, word_except)
+    pos_context = tools.create_pos_context(embeddings, vocab)
+    neg_context = tools.create_neg_context(pos_context, vocab, k)
+
+    to_save = ""
+    for main_word in pos_context.keys():
+        for pos_word in pos_context.get(main_word):
+            to_save += str(main_word) + " " + str(pos_word) + "\n"
+
+    to_save += "-----separation------" + "\n"
+
+    for main_word in neg_context.keys():
+        for neg_word in neg_context.get(main_word):
+            to_save += str(main_word) + " " + str(neg_word) + "\n"
+
+    print(f"\tFile contains: {len(embeddings)} lines")
     with open(save_path, "w", encoding='utf-8') as f:
-        f.write(embedding_to_save)
-
-
-
-
-
-
-
-
+        f.write(to_save)

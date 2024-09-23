@@ -2,7 +2,7 @@ import sys
 import random
 
 if len(sys.argv) < 5:
-    print("Usage:", sys.argv[0], "fichier_tokenisé","ratio_corpus_test", "corpus_train", "corpus_test")
+    print("Usage:", sys.argv[0], "fichier_tokenisé", "ratio_corpus_test", "corpus_train", "corpus_test")
     exit(0)
 
 corpusName = sys.argv[1]

@@ -3,9 +3,6 @@ the goal is to predict if word context is positive or negative
 .module author::Marius THORRE
 """
 # https://otmaneboughaba.com/posts/Word2Vec-in-Pytorch/
-import sys
-import argparse
-import pandas
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -49,33 +46,27 @@ class ClassifierWord2Vec(nn.Module):
 
 
 if __name__ == "__main__":
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument('-opt', dest='optimizer', default='SGD', choices=['SGD', 'ADAM', 'RMSPROP'])
-    # parser.add_argument('-train_path', dest='train_path')
-    # parser.add_argument('-test_path', dest='test_path')
-    #
-    # args = parser.parse_args()
-    # opt = args.optimizer
-
     #TODO train data, test data
     #TODO a configurer
-    train_data = torch.tensor(0)
-    test_data = torch.tensor(0)
-    input_dim = 0
+    # train_data = torch.tensor(0)
+    # test_data = torch.tensor(0)
+    # input_dim = 0
+    #
+    # dataset = EmbeddingDataset(train_data=train_data, test_data=test_data)
+    # dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
+    #
+    # device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    # embedding_size = 5
+    # model = ClassifierWord2Vec(input_dim=input_dim)
+    # model.to(device)
+    #
+    # optimizer = optim.Adam(model.parameters(), lr=1e-3)
+    # loss = Loss()
+    #
+    # epochs = 10
+    #
+    # for epoch in range(epochs):
+    #     running_loss = 0
+    #     for batch,
 
-    dataset = EmbeddingDataset(train_data=train_data, test_data=test_data)
-    dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
-
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    embedding_size = 5
-    model = ClassifierWord2Vec(input_dim=input_dim)
-    model.to(device)
-
-    optimizer = optim.Adam(model.parameters(), lr=1e-3)
-    loss = Loss()
-
-    epochs = 10
-
-    for epoch in range(epochs):
-        running_loss = 0
-        for batch,
+    pass

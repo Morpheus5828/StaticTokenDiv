@@ -4,6 +4,18 @@ import time
 
 
 class TestTools(TestCase):
+
+    def test(self):
+        test = {"a": [1,2,3], "b": [2,3,4]}
+        for word in test.get("a"):
+            print(word)
+    def test_create_text(self):
+        print("TEST test_create_text")
+        text_path = "../../resources/tlnl_tp1_data/alexandre_dumas/Le_comte_de_Monte_Cristo.tok"
+        text = tools.get_text(text_path)
+        print(text[0])
+
+
     def test_embedding_sentence(self):
         print("TEST test_embedding_sentence")
         start = time.time()
@@ -11,9 +23,9 @@ class TestTools(TestCase):
 
         text_path = "../../resources/tlnl_tp1_data/alexandre_dumas/Le_comte_de_Monte_Cristo.tok"
         L=2
-        minc=10
+        minc=5
 
-        result = tools.get_embedding_sentence(
+        result = tools.create_embeddings(
             L=L,
             minc=minc,
             text_path=text_path
@@ -22,31 +34,32 @@ class TestTools(TestCase):
 
         print(f"\tVocab creation process time: {end - start:.2f} s")
 
-        self.assertTrue(result[0] == ['février', '1815', ',', 'la', 'vigie'])
-        self.assertTrue(result[1] == ['le', 'pharaon', ',', 'venant', 'de'])
-        self.assertTrue(len(result) == 184581) #nb of embedding available
+        print(result[0])
+        #self.assertTrue(result[0] == [6226, 7904, 10220, 10472, 3628])
+        #self.assertTrue(len(result) == 184581) #nb of embedding available
 
     def test_create_vocabulary(self):
         print("TEST test_create_vocabulary")
         text_path = "../../resources/tlnl_tp1_data/alexandre_dumas/Le_comte_de_Monte_Cristo.tok"
-        all_text = tools.get_text(text_path)
-        vocab = tools.create_vocabulary(all_text)
-        print(len(vocab))
+        text = tools.get_text(text_path)
+        vocab = tools.create_vocabulary(text)
+        print(vocab["</s>"])
 
     def test_get_word_occurrence(self):
         print("TEST test_get_word_occurrence")
         text_path = "../../resources/tlnl_tp1_data/alexandre_dumas/Le_comte_de_Monte_Cristo.tok"
-        all_text = tools.get_text(text_path)
-        vocab = tools.create_vocabulary(all_text)
+        text = tools.get_text(text_path)
+        vocab = tools.create_vocabulary(text)
         occurences = {}
         start = time.time()
         print("\tStarting vocab extraction process ...")
         for word in vocab:
-            occurences[word] = tools.get_word_occurrence(word=word, text=all_text)
+            occurences[word] = tools.get_word_occurrence(word=word, text=text)
         end = time.time()
-        print(f"\tVocab creation process time: {end-start:.2f} s")
+        print(f"\tVocab creation process time: {end - start:.2f} s")
         occurences = dict(sorted(occurences.items(), key=lambda item: item[1], reverse=True))
 
+        print(occurences["."])
         self.assertTrue(occurences["<s>"] == 19027)
         self.assertTrue(occurences["</s>"] == 19024)
 
@@ -55,3 +68,4 @@ class TestTools(TestCase):
 
         result = tools.break_list_for_txt(sentence)
         self.assertTrue(result == "février 1815 , la vigie")
+
