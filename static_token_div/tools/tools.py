@@ -85,17 +85,18 @@ def get_embedding_sentence(
     # keep cocurence which appears than minc time in all_text
     occurencies = filter_occurence(occurencies, step=minc)
     # create embedding from main occurencies words
+    print(occurencies)
     all_embedding = []
-    for current_word in occurencies.keys():
-        for word_index in range(len(all_text)):
-            if current_word == all_text[word_index] and (current_word not in word_except):
-                current_embedding = []
-                for i in range(-L, L+1):
-                    try:
-                        current_embedding.append(all_text[word_index+i])
-                    except:
-                        print(f"Error detected when created embedding")
-                all_embedding.append(current_embedding)
+    # for current_word in occurencies.keys():
+    #     for word_index in range(len(vocab)):
+    #         if current_word == all_text[word_index] and (current_word not in word_except):
+    #             current_embedding = []
+    #             for i in range(-L, L+1):
+    #                 try:
+    #                     current_embedding.append(all_text[word_index+i])
+    #                 except:
+    #                     print(f"Error detected when created embedding")
+    #             all_embedding.append(current_embedding)
     return all_embedding
 
 
