@@ -147,7 +147,5 @@ def create_neg_context(
     return neg_context
 
 
-def remove_all(main_list, to_remove):
-    for word in to_remove:
-        main_list.remove(word)
-    return main_list
+def cosine_similarity(vec1, vec2):
+    return np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2))
