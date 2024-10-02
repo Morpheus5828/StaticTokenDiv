@@ -13,6 +13,7 @@ L = 2  # number of positive and negative word context between target word
 k = 2  # number of neg context for 1 pos context
 minc = 5  # number of minimal take occurrence to take as target word
 word_except = ["<s>", "</s>"]  # exception word, not take as target word
+max_context = 100
 
 start = time.time()
 print("\tStarting embedding generator file creation ...")
@@ -25,7 +26,8 @@ w2v.embedding_generator(
     L=L,
     k=k,
     minc=minc,
-    word_except=word_except
+    word_except=word_except,
+    max_context=max_context
 )
 
 end = time.time()

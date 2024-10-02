@@ -12,11 +12,13 @@ def embedding_generator(
     L: int,
     k: int,
     minc: int,
-    word_except: list
+    word_except: list,
+    max_context: int
 
 ) -> None:
     """
     Embedding generator file
+    :param max_context:
     :param save_path2:
     :param save_path: embedding saving path file
     :param text_path: text to apply embeddings
@@ -45,30 +47,30 @@ def embedding_generator(
     with open(save_path1, "w", encoding='utf-8') as f:
         f.write(to_save)
 
-    to_save2 = ""
+    to_save2 = str(max_context) + " " + str(k) + "\n"
     for main_word in vocab.keys():
         if main_word in occurrences and main_word not in word_except:
             word = vocab.get(main_word)
             to_save2 += str(word) + " "
             pos_list = list(pos_context.get(word))
-            if len(pos_list) >= 100:
-                for i in range(100):
+            if len(pos_list) >= max_context:
+                for i in range(max_context):
                     to_save2 += str(pos_list[i]) + " "
             else:
                 for i in range(len(pos_list)):
                     to_save2 += str(pos_list[i]) + " "
-                for i in range(100 - len(pos_list)):
+                for i in range(max_context - len(pos_list)):
                     to_save2 += str(0) + " "
             neg_list = list(neg_context.get(word))
-            if len(pos_list) > 100:
+            if len(pos_list) > max_context:
                 for i in range(k):
-                    for j in range(100):
+                    for j in range(max_context):
                         to_save2 += str(neg_list[i*j]) + " "
             else:
                 for i in range(k):
                     for j in range(len(pos_list)):
                         to_save2 += str(neg_list[i*j]) + " "
-                    for j in range(100 - len(pos_list)):
+                    for j in range(max_context - len(pos_list)):
                         to_save2 += str(0) + " "
             to_save2 += "\n"
 
