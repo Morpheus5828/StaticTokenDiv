@@ -112,11 +112,14 @@ def create_embeddings(
 
 def create_pos_context(
         embeddings: list,
-        vocab: dict
+        vocab: dict,
+        occurrences: set,
+        word_except: list
 ) -> dict[int | set]:
     pos_context = {}
     for unique_word in vocab:
-        pos_context[vocab.get(unique_word)] = set()
+        if unique_word in occurrences and unique_word not in word_except:
+            pos_context[vocab.get(unique_word)] = set()
     for embedding in embeddings:
         for i in (0, 1, 3, 4):
             pos_context.get(embedding[2]).add(embedding[i])
@@ -126,11 +129,14 @@ def create_pos_context(
 def create_neg_context(
         pos_context: dict[int | set],
         vocab: dict,
-        k: int
+        k: int,
+        occurrences: set,
+        word_except: list
 ) -> dict[int | set]:
     neg_context = {}
     for unique_word in vocab:
-        neg_context[vocab.get(unique_word)] = set()
+        if unique_word in occurrences and unique_word not in word_except:
+            neg_context[vocab.get(unique_word)] = set()
     for word in pos_context.keys():
         allowed_list = list(vocab.values())
         for word_to_remove in pos_context.get(word):
