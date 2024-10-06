@@ -3,6 +3,7 @@ from typing import Dict, Any, Tuple, List
 import numpy as np
 from tqdm import tqdm
 import random
+import pandas as pd
 
 
 def sigmoid(
@@ -166,3 +167,9 @@ def generate_embeddings_file(
         f2.write(to_save)
 def cosine_similarity(vec1, vec2):
     return np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2))
+
+def extract_embeddings_data(
+        txt_path: str,
+):
+    df = pd.read_csv(txt_path, delimiter=' ')
+    return df

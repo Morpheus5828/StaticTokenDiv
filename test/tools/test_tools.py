@@ -87,6 +87,6 @@ class TestTools(TestCase):
         self.assertTrue(len(neg_context.get(4)) == 3)
 
 
-
-
-
+    def test_extract(self):
+        df = tools.extract_embeddings_data("../../static_token_div/learning/learning_file.txt")
+        print(df.head())
