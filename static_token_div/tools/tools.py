@@ -4,7 +4,7 @@ import numpy as np
 from tqdm import tqdm
 import random
 import pandas as pd
-
+from collections import defaultdict
 
 def sigmoid(
         z: np.ndarray,
@@ -15,8 +15,9 @@ def sigmoid(
 def get_text(text_path: str) -> list[str]:
     text_path = text_path.lower()
     with open(text_path, "r", encoding='utf-8') as vocab_file:
-        text = vocab_file.read()
-    return text.split()
+        text = vocab_file.read().split()
+    return text
+
 
 
 def create_vocabulary(text: list) -> dict[str, int]:
@@ -72,7 +73,8 @@ def create_embeddings(
             current_embedding = []
             for i in range(-L, L + 1):
                 try:
-                    current_embedding.append(vocab.get(text[index + i]))
+                    if len(text) > index + i:
+                        current_embedding.append(vocab.get(text[index + i]))
                 except:
                     print(f"Error detected when created embedding : " + word)
             all_embedding.append(current_embedding)
@@ -93,10 +95,13 @@ def create_pos_context(
             pos_context[vocab.get(unique_word)] = set()
     for embedding in embeddings:
         for i in range(L):
-            pos_context.get(embedding[2]).add(embedding[i])
+            if len(embedding) > i:
+                pos_context.get(embedding[L]).add(embedding[i])
         for i in range(L + 1, 2 * L + 1):
-            pos_context.get(embedding[2]).add(embedding[i])
+            if len(embedding) > i:
+                pos_context.get(embedding[L]).add(embedding[i])
     return pos_context
+
 
 
 def create_neg_context(
@@ -178,3 +183,71 @@ def extract_embeddings_data(
 ):
     df = pd.read_csv(txt_path, delimiter=' ')
     return df
+
+
+def get_text2(text_path: str) -> list[str]:
+    text_path = text_path.lower()
+    with open(text_path, "r", encoding='utf-8') as vocab_file:
+        text = vocab_file.read().split("\n")
+    return text
+
+
+def create_vocabulary2(
+        text: list
+) -> dict:
+    word_counts = defaultdict(int)
+    for sentence in text:
+        for word in sentence.split():
+            word_counts[word] += 1
+        vocab = {word: (idx, count) for idx, (word, count) in enumerate(word_counts.items())}
+    return vocab
+
+
+def create_context(
+        text: list,
+        vocab: dict,
+        L: int,
+        k: int,
+        word_except: list,
+        minc: int
+) -> list:
+    training_data = []
+    vocab_list = list(vocab.keys())
+
+    for sentence in text:
+        words = sentence.split()
+        for i, word in enumerate(words):
+            if word not in vocab or word in word_except or vocab[words[i]][1] < minc:
+                continue
+            target_word = vocab[word]
+            # Positive context words
+            pos_context_indices = list(range(max(0, i - L), min(len(words), i + L + 1)))
+            pos_context_indices.remove(i)
+
+            for j in pos_context_indices:
+                if words[j] in vocab and words[j] not in word_except:
+                    pos_context_word = vocab[words[j]]
+                    training_data.append((target_word[0], pos_context_word[0], 1))
+
+                    # Negative sampling
+                    for _ in range(k):
+                        neg_word = random.choice(vocab_list)
+                        while neg_word == word or neg_word in word_except:
+                            neg_word = random.choice(vocab_list)
+                        neg_context_word = vocab[neg_word]
+                        training_data.append((target_word[0], neg_context_word[0], 0))
+
+    return training_data
+
+
+def generate_training_data(
+        context: list,
+        training_path: str,
+
+):
+    to_save = ""
+    for data in context:
+        to_save += str(data[0]) + " " + str(data[1]) + " " + str(data[2]) + "\n"
+
+    with open(training_path, "w", encoding='utf-8') as f2:
+        f2.write(to_save)
