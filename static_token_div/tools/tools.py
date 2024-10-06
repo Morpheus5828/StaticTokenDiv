@@ -71,28 +71,6 @@ def create_embeddings(
         L: int,
         word_except: list
 ) -> list:
-# <<<<<<< HEAD
-#     # create vocabulary from text
-#     all_text = get_text(text_path)
-#     vocab = create_vocabulary(all_text)
-#     # compute all words occurence in text
-#     occurencies = get_text_word_occurence(all_text)
-#     # keep cocurence which appears than minc time in all_text
-#     occurencies = filter_occurence(occurencies, step=minc)
-#     # create embedding from main occurencies words
-#     print(occurencies)
-#     all_embedding = []
-#     # for current_word in occurencies.keys():
-#     #     for word_index in range(len(vocab)):
-#     #         if current_word == all_text[word_index] and (current_word not in word_except):
-#     #             current_embedding = []
-#     #             for i in range(-L, L+1):
-#     #                 try:
-#     #                     current_embedding.append(all_text[word_index+i])
-#     #                 except:
-#     #                     print(f"Error detected when created embedding")
-#     #             all_embedding.append(current_embedding)
-# =======
     all_embedding = []
     # for sentence in all_text:
 
