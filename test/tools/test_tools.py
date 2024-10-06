@@ -62,10 +62,11 @@ class TestTools(TestCase):
 
     def test_pos_context(self):
         sentence = ['<s>', '<s>', 'Ce', 'chat', 'aime', 'un', 'autre', 'chat', '</s>', '</s>']
+        word_except = ['<s>', '</s>']
         vocab = tools.create_vocabulary(sentence)
         occurrences = tools.get_occurrences(sentence, vocab, 1)
-        embeddings = tools.create_embeddings(sentence, vocab, occurrences, 2, word_except=['<s>', '</s>'])
-        pos_context = tools.create_pos_context(embeddings, vocab)
+        embeddings = tools.create_embeddings(sentence, vocab, occurrences, 2, word_except)
+        pos_context = tools.create_pos_context(embeddings, vocab, occurrences, 2, word_except)
 
         self.assertTrue(pos_context.get(1) == {0, 2, 3})
         self.assertTrue(pos_context.get(2) == {0, 1, 3, 4, 5, 6})
@@ -78,7 +79,7 @@ class TestTools(TestCase):
         vocab = tools.create_vocabulary(sentence)
         occurrences = tools.get_occurrences(sentence, vocab, 1)
         embeddings = tools.create_embeddings(sentence, vocab, occurrences, 2, word_except)
-        pos_context = tools.create_pos_context(embeddings, vocab)
+        pos_context = tools.create_pos_context(embeddings, vocab, occurrences, 2, word_except)
         neg_context = tools.create_neg_context(pos_context, vocab, 1, occurrences, word_except)
 
         self.assertTrue(len(neg_context.get(1)) == 3)

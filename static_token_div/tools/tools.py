@@ -71,28 +71,6 @@ def create_embeddings(
         L: int,
         word_except: list
 ) -> list:
-# <<<<<<< HEAD
-#     # create vocabulary from text
-#     all_text = get_text(text_path)
-#     vocab = create_vocabulary(all_text)
-#     # compute all words occurence in text
-#     occurencies = get_text_word_occurence(all_text)
-#     # keep cocurence which appears than minc time in all_text
-#     occurencies = filter_occurence(occurencies, step=minc)
-#     # create embedding from main occurencies words
-#     print(occurencies)
-#     all_embedding = []
-#     # for current_word in occurencies.keys():
-#     #     for word_index in range(len(vocab)):
-#     #         if current_word == all_text[word_index] and (current_word not in word_except):
-#     #             current_embedding = []
-#     #             for i in range(-L, L+1):
-#     #                 try:
-#     #                     current_embedding.append(all_text[word_index+i])
-#     #                 except:
-#     #                     print(f"Error detected when created embedding")
-#     #             all_embedding.append(current_embedding)
-# =======
     all_embedding = []
     # for sentence in all_text:
 
@@ -114,6 +92,7 @@ def create_pos_context(
         embeddings: list,
         vocab: dict,
         occurrences: set,
+        L: int,
         word_except: list
 ) -> dict[int | set]:
     pos_context = {}
@@ -121,7 +100,9 @@ def create_pos_context(
         if unique_word in occurrences and unique_word not in word_except:
             pos_context[vocab.get(unique_word)] = set()
     for embedding in embeddings:
-        for i in (0, 1, 3, 4):
+        for i in range(L):
+            pos_context.get(embedding[2]).add(embedding[i])
+        for i in range(L+1, 2*L + 1):
             pos_context.get(embedding[2]).add(embedding[i])
     return pos_context
 
@@ -152,6 +133,36 @@ def create_neg_context(
 
     return neg_context
 
+def generate_vocab_file(
+        vocab: dict[str | int],
+        occurrences: set,
+        word_except: list,
+        save_path: str
+):
+    to_save = ""
+    for main_word in vocab.keys():
+        if main_word in occurrences and main_word not in word_except:
+            to_save += str(vocab.get(main_word)) + "\n"
 
+    with open(save_path, "w", encoding='utf-8') as f:
+        f.write(to_save)
+
+def generate_embeddings_file(
+        pos_context: dict[int | set],
+        neg_context: dict[int | set],
+        embeddings: list,
+        save_path: str
+):
+    to_save = ""
+
+    for main_word in pos_context.keys():
+        for pos_word in pos_context.get(main_word):
+            to_save += str(main_word) + " " + str(pos_word) + " 1\n"
+        for neg_word in neg_context.get(main_word):
+            to_save += str(main_word) + " " + str(neg_word) + " 0\n"
+
+    print(f"\tFile contains: {len(embeddings)} lines")
+    with open(save_path, "w", encoding='utf-8') as f2:
+        f2.write(to_save)
 def cosine_similarity(vec1, vec2):
     return np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2))
