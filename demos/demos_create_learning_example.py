@@ -16,7 +16,9 @@ print("\tPlease hold on, it can take few moments :-)")
 tools.generate_embeddings_file(
     text=tools.get_text(text_path),
     save_path=saving_path,
-    word_except=word_except
+    word_except=word_except,
+    k=2,
+    L=100
 )
 
 end = time.time()
