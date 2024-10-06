@@ -65,7 +65,6 @@ def create_embeddings(
         word_except: list
 ) -> list:
     all_embedding = []
-    # for sentence in all_text:
 
     index = 0
     for word in text:
@@ -75,7 +74,7 @@ def create_embeddings(
                 try:
                     current_embedding.append(vocab.get(text[index + i]))
                 except:
-                    print(f"Error detected when created embedding : " + word + " and : " + text[index + i])
+                    print(f"Error detected when created embedding : " + word)
             all_embedding.append(current_embedding)
         index = index + 1
     return all_embedding
@@ -146,13 +145,16 @@ def generate_embeddings_file(
         text: list,
         save_path: str,
         word_except: list,
+        L: int,
+        k: int,
+        minc: int = 1
 ):
     vocab = create_vocabulary(text)
 
-    occurrences = get_occurrences(text, vocab, 1)
-    embeddings = create_embeddings(text, vocab, occurrences, 2, word_except)
-    pos_context = create_pos_context(embeddings, vocab, occurrences, 2, word_except)
-    neg_context = create_neg_context(pos_context, vocab, 1, occurrences, word_except)
+    occurrences = get_occurrences(text, vocab, minc)
+    embeddings = create_embeddings(text, vocab, occurrences, L, word_except)
+    pos_context = create_pos_context(embeddings, vocab, occurrences, L, word_except)
+    neg_context = create_neg_context(pos_context, vocab, k, occurrences, word_except)
 
     to_save = ""
 
@@ -165,8 +167,6 @@ def generate_embeddings_file(
     print(f"\tFile contains: {len(embeddings)} lines")
     with open(save_path, "w", encoding='utf-8') as f2:
         f2.write(to_save)
-
-
 
 
 def cosine_similarity(vec1, vec2):
