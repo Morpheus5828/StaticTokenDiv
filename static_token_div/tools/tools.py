@@ -7,17 +7,9 @@ import pandas as pd
 
 
 def sigmoid(
-        m: np.ndarray,
-        c: np.ndarray,
-        prob: str
+        z: np.ndarray,
 ) -> float:
-    if prob == "neg":
-        return 1 / (1 + np.exp(np.multiply(-m, c)))
-    elif prob == "pos":
-        return 1 / (1 + np.exp(np.multiply(m, c)))
-    else:
-        print("prob not recognized")
-        return 0
+    return 1 / (1 + np.exp(-z))
 
 
 def get_text(text_path: str) -> list[str]:
@@ -103,7 +95,7 @@ def create_pos_context(
     for embedding in embeddings:
         for i in range(L):
             pos_context.get(embedding[2]).add(embedding[i])
-        for i in range(L+1, 2*L + 1):
+        for i in range(L + 1, 2 * L + 1):
             pos_context.get(embedding[2]).add(embedding[i])
     return pos_context
 
@@ -134,6 +126,7 @@ def create_neg_context(
 
     return neg_context
 
+
 def generate_vocab_file(
         vocab: dict[str | int],
         occurrences: set,
@@ -148,12 +141,19 @@ def generate_vocab_file(
     with open(save_path, "w", encoding='utf-8') as f:
         f.write(to_save)
 
+
 def generate_embeddings_file(
-        pos_context: dict[int | set],
-        neg_context: dict[int | set],
-        embeddings: list,
-        save_path: str
+        text: list,
+        save_path: str,
+        word_except: list,
 ):
+    vocab = create_vocabulary(text)
+
+    occurrences = get_occurrences(text, vocab, 1)
+    embeddings = create_embeddings(text, vocab, occurrences, 2, word_except)
+    pos_context = create_pos_context(embeddings, vocab, occurrences, 2, word_except)
+    neg_context = create_neg_context(pos_context, vocab, 1, occurrences, word_except)
+
     to_save = ""
 
     for main_word in pos_context.keys():
@@ -165,8 +165,13 @@ def generate_embeddings_file(
     print(f"\tFile contains: {len(embeddings)} lines")
     with open(save_path, "w", encoding='utf-8') as f2:
         f2.write(to_save)
+
+
+
+
 def cosine_similarity(vec1, vec2):
     return np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2))
+
 
 def extract_embeddings_data(
         txt_path: str,
