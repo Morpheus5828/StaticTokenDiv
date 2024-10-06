@@ -6,16 +6,20 @@ import static_token_div.tools.tools as tools
 
 
 def embedding_generator(
-    save_path: str,
+    vocab_path: str,
+    embeddings_path: str,
     text_path: str,
     L: int,
     k: int,
     minc: int,
-    word_except: list
+    word_except: list,
+    max_context: int
 
 ) -> None:
     """
     Embedding generator file
+    :param max_context:
+    :param save_path2:
     :param save_path: embedding saving path file
     :param text_path: text to apply embeddings
     :param L: right and left context size, windows size is equal to 2*L + 1
@@ -32,20 +36,9 @@ def embedding_generator(
     print(f"\t Vocab size: {len(vocab)}")
     occurrences = tools.get_occurrences(text, vocab, minc)
     embeddings = tools.create_embeddings(text, vocab, occurrences, L, word_except)
-    pos_context = tools.create_pos_context(embeddings, vocab)
-    neg_context = tools.create_neg_context(pos_context, vocab, k)
+    pos_context = tools.create_pos_context(embeddings, vocab, occurrences, L, word_except)
+    neg_context = tools.create_neg_context(pos_context, vocab, k, occurrences, word_except)
 
-    to_save = ""
-    for main_word in pos_context.keys():
-        for pos_word in pos_context.get(main_word):
-            to_save += str(main_word) + " " + str(pos_word) + "\n"
+    tools.generate_vocab_file(vocab, occurrences, word_except, vocab_path)
 
-    to_save += "-----separation------" + "\n"
-
-    for main_word in neg_context.keys():
-        for neg_word in neg_context.get(main_word):
-            to_save += str(main_word) + " " + str(neg_word) + "\n"
-
-    print(f"\tFile contains: {len(embeddings)} lines")
-    with open(save_path, "w", encoding='utf-8') as f:
-        f.write(to_save)
+    tools.generate_embeddings_file(pos_context, neg_context, embeddings, embeddings_path)
