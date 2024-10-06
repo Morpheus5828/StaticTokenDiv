@@ -18,6 +18,13 @@ class TestTools(TestCase):
         self.assertTrue(vocab["</s>"] == 6)
         self.assertTrue(vocab["chat"] == 2)
 
+    def test_create_vocabulary2(self):
+        print("TEST test_create_vocabulary")
+        sentence = ["<s> <s> Ce chat aime un autre chat </s> </s>"]
+
+        vocab = tools.create_vocabulary2(sentence)
+        print(vocab)
+
     def test_get_word_occurrence(self):
         print("TEST test_get_word_occurrence")
         sentence = ['<s>', '<s>', 'Ce', 'chat', 'aime', 'un', 'autre', 'chat', '</s>', '</s>']
@@ -76,6 +83,14 @@ class TestTools(TestCase):
         self.assertTrue(len(neg_context.get(2)) == 1)
         self.assertTrue(len(neg_context.get(4)) == 3)
 
+
+    def test_context(self):
+        sentence = ["<s> <s> Ce chat aime un autre chat </s> </s>"]
+        word_except = ['<s>', '</s>']
+
+        vocab = tools.create_vocabulary2(sentence)
+        context = tools.create_context(sentence, vocab, 2, 1, word_except, 2)
+        print(context)
     def test_generate_embeddings_file(self):
         sentence = ['<s>', '<s>', 'Ce', 'chat', 'aime', 'un', 'autre', 'chat', '</s>', '</s>']
         word_except = ['<s>', '</s>']
