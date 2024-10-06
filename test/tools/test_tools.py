@@ -15,6 +15,7 @@ class TestTools(TestCase):
         text = tools.get_text(text_path)
         print(text[0])
 
+
     def test_create_vocabulary(self):
         print("TEST test_create_vocabulary")
         sentence = ['<s>', '<s>', 'Ce', 'chat', 'aime', 'un', 'autre', 'chat', '</s>', '</s>']
@@ -37,6 +38,7 @@ class TestTools(TestCase):
         self.assertTrue("chat" in occurrences)
         self.assertTrue("un" not in occurrences)
 
+
     def test_embedding_sentence(self):
         print("TEST test_embedding_sentence")
         print("\tStarting embedding creation extraction process ...")
@@ -50,6 +52,7 @@ class TestTools(TestCase):
         self.assertTrue(embeddings[0] == [0, 0, 1, 2, 3])
         self.assertTrue(embeddings[-1] == [4, 5, 2, 6, 6])
 
+
     def test_break_list_for_txt(self):
         sentence = ['février', '1815', ',', 'la', 'vigie']
 
@@ -59,10 +62,11 @@ class TestTools(TestCase):
 
     def test_pos_context(self):
         sentence = ['<s>', '<s>', 'Ce', 'chat', 'aime', 'un', 'autre', 'chat', '</s>', '</s>']
+        word_except = ['<s>', '</s>']
         vocab = tools.create_vocabulary(sentence)
         occurrences = tools.get_occurrences(sentence, vocab, 1)
-        embeddings = tools.create_embeddings(sentence, vocab, occurrences, 2, word_except=['<s>', '</s>'])
-        pos_context = tools.create_pos_context(embeddings, vocab, occurrences, word_except=['<s>', '</s>'])
+        embeddings = tools.create_embeddings(sentence, vocab, occurrences, 2, word_except)
+        pos_context = tools.create_pos_context(embeddings, vocab, occurrences, 2, word_except)
 
         self.assertTrue(pos_context.get(1) == {0, 2, 3})
         self.assertTrue(pos_context.get(2) == {0, 1, 3, 4, 5, 6})
@@ -75,7 +79,7 @@ class TestTools(TestCase):
         vocab = tools.create_vocabulary(sentence)
         occurrences = tools.get_occurrences(sentence, vocab, 1)
         embeddings = tools.create_embeddings(sentence, vocab, occurrences, 2, word_except)
-        pos_context = tools.create_pos_context(embeddings, vocab, occurrences, word_except=['<s>', '</s>'])
+        pos_context = tools.create_pos_context(embeddings, vocab, occurrences, 2, word_except)
         neg_context = tools.create_neg_context(pos_context, vocab, 1, occurrences, word_except)
 
         self.assertTrue(len(neg_context.get(1)) == 3)
@@ -83,6 +87,6 @@ class TestTools(TestCase):
         self.assertTrue(len(neg_context.get(4)) == 3)
 
 
-
-
-
+    def test_extract(self):
+        df = tools.extract_embeddings_data("../../static_token_div/learning/learning_file.txt")
+        print(df.head())

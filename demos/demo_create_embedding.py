@@ -20,8 +20,8 @@ print("\tStarting embedding generator file creation ...")
 print("\tPlease hold on, it can take few moments :-)")
 
 w2v.embedding_generator(
-    save_path1=vocab_path,
-    save_path2=learning_path,
+    vocab_path=vocab_path,
+    embeddings_path=learning_path,
     text_path=text_path,
     L=L,
     k=k,
