@@ -42,13 +42,13 @@ def _create_learning_file(
         minc: int
 ) -> list:
     text = get_text(text_path)
-    vocab = _create_vocabulary(text)
+    vocab = _create_vocabulary(text, minc)
     training_data = []
     vocab_list = list(vocab.keys())
     for sentence in text:
         words = sentence.split()
         for i, word in enumerate(words):
-            if word not in vocab or word in word_except or vocab[words[i]][1] < minc:
+            if word not in vocab or word in word_except:
                 continue
             target_word = vocab[word]
             # Positive context words
@@ -72,45 +72,15 @@ def _create_learning_file(
     return training_data
 
 
-def get_embedding(
-        text_path: str,
-        word_except: list,
-        L: int,
-        k: int,
-        minc: int = 1
-):
-    text = get_text(text_path)
-    vocab = _create_vocabulary(text)
-    occurrences = _get_occurrences(text, vocab, minc)
-    embeddings = _create_embeddings(text, vocab, occurrences, L, word_except)
-    pos_context = _create_pos_context(embeddings, vocab, occurrences, L, word_except)
-    neg_context = _create_neg_context(pos_context, vocab, k, occurrences, word_except)
-    result = []
-    target = [line[2] for line in embeddings]
-    for element in vocab.keys():
-        print(vocab.get(element)[0])
-
-
-'''
-
-    neg_context = _create_neg_context(pos_context, vocab, k, occurrences, word_except)
-    embedding = {}
-    for main_word in pos_context.keys():
-        context = {}
-        for pos_word in pos_context.get(main_word):
-            c_neg = [neg_word for neg_word in neg_context.get(main_word)]
-            context["c_pos"] = pos_word
-            context["c_neg"] = c_neg'''
-
-
 def _create_vocabulary(
-        text: list
+        text: list,
+        minc: int
 ) -> dict:
     word_counts = defaultdict(int)
     for sentence in text:
         for word in sentence.split():
             word_counts[word] += 1
-        vocab = {word: (idx, count) for idx, (word, count) in enumerate(word_counts.items())}
+        vocab = {word: (idx, count) for idx, (word, count) in enumerate(word_counts.items()) if count >= minc}
     return vocab
 
 
