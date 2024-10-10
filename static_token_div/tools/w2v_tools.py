@@ -41,13 +41,13 @@ def _create_learning_file(
         word_except: list,
         minc: int
 ) -> list:
-    vocab = _create_vocabulary(text)
+    vocab = _create_vocabulary(text, minc)
     training_data = []
     vocab_list = list(vocab.keys())
     for sentence in text:
         words = sentence.split()
         for i, word in enumerate(words):
-            if word not in vocab or word in word_except or vocab[words[i]][1] < minc:
+            if word not in vocab or word in word_except:
                 continue
             target_word = vocab[word]
             # Positive context words
@@ -103,13 +103,14 @@ def get_embedding(
 
 
 def _create_vocabulary(
-        text: list
+        text: list,
+        minc: int
 ) -> dict:
     word_counts = defaultdict(int)
     for sentence in text:
         for word in sentence.split():
             word_counts[word] += 1
-        vocab = {word: (idx, count) for idx, (word, count) in enumerate(word_counts.items())}
+        vocab = {word: (idx, count) for idx, (word, count) in enumerate(word_counts.items()) if count >= minc}
     return vocab
 
 
