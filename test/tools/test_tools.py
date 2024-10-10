@@ -7,7 +7,7 @@ class TestTools(TestCase):
     def test_create_text(self):
         print("TEST test_create_text")
         text_path = "../../resources/tlnl_tp1_data/alexandre_dumas/Le_comte_de_Monte_Cristo.tok"
-        text = tools.get_text(text_path)
+        text = tools._get_text(text_path)
         print(text[0])
 
     def test_create_vocabulary(self):
@@ -89,7 +89,7 @@ class TestTools(TestCase):
         word_except = ['<s>', '</s>']
 
         vocab = tools.create_vocabulary2(sentence)
-        context = tools.create_context(sentence, vocab, 2, 1, word_except, 2)
+        context = tools._create_context(sentence, vocab, 2, 1, word_except, 2)
         print(context)
     def test_generate_embeddings_file(self):
         sentence = ['<s>', '<s>', 'Ce', 'chat', 'aime', 'un', 'autre', 'chat', '</s>', '</s>']

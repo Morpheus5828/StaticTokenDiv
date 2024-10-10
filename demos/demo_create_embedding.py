@@ -2,15 +2,14 @@
 .module author:: Marius THORRE
 """
 
-import static_token_div.algorithms.w2v as w2v
+from static_token_div.tools.embedding_tools import embedding_generator
 import time
 
-text_path = "../resources/tlnl_tp1_data/alexandre_dumas/Le_comte_de_Monte_Cristo.train.tok"
-vocab_path = "../static_token_div/learning/vocab.txt"
-learning_path = "../static_token_div/learning/learning_file.txt"
+text_path = "../resources/tlnl_tp1_data/alexandre_dumas/Le_comte_de_Monte_Cristo.tok"
+learning_path = "../static_token_div/learning_file.txt"
 
 L = 2  # number of positive and negative word context between target word
-k = 2  # number of neg context for 1 pos context
+k = 10  # number of neg context for 1 pos context
 minc = 5  # number of minimal take occurrence to take as target word
 word_except = ["<s>", "</s>"]  # exception word, not take as target word
 
@@ -18,9 +17,8 @@ start = time.time()
 print("\tStarting embedding generator file creation ...")
 print("\tPlease hold on, it can take few moments :-)")
 
-w2v.embedding_generator(
-    vocab_path=vocab_path,
-    training_path=learning_path,
+embedding_generator(
+    saving_path=learning_path,
     text_path=text_path,
     L=L,
     k=k,

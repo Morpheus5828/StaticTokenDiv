@@ -1,7 +1,7 @@
 from unittest import TestCase
 import time
 import static_token_div.algorithms.w2v as w2v
-from static_token_div.tools.tools import get_text
+from static_token_div.tools.tools import _get_text
 
 
 class TestW2v(TestCase):
