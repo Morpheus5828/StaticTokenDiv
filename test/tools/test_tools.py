@@ -1,5 +1,6 @@
 from unittest import TestCase
 from static_token_div.tools import tools
+from static_token_div.tools import w2v_tools
 import time
 
 
@@ -88,9 +89,9 @@ class TestTools(TestCase):
         sentence = ["<s> <s> Ce chat aime un autre chat </s> </s>"]
         word_except = ['<s>', '</s>']
 
-        vocab = tools.create_vocabulary2(sentence)
-        context = tools._create_context(sentence, vocab, 2, 1, word_except, 2)
+        context = w2v_tools._create_learning_file(sentence, 2, 3, word_except, 2)
         print(context)
+
     def test_generate_embeddings_file(self):
         sentence = ['<s>', '<s>', 'Ce', 'chat', 'aime', 'un', 'autre', 'chat', '</s>', '</s>']
         word_except = ['<s>', '</s>']

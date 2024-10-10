@@ -35,13 +35,12 @@ def generate_embeddings_file(
 
 
 def _create_learning_file(
-    text_path: str,
+        text: list,
         L: int,
         k: int,
         word_except: list,
         minc: int
 ) -> list:
-    text = get_text(text_path)
     vocab = _create_vocabulary(text)
     training_data = []
     vocab_list = list(vocab.keys())
@@ -57,6 +56,7 @@ def _create_learning_file(
 
             for j in pos_context_indices:
                 if words[j] in vocab and words[j] not in word_except:
+                    context_word_idx = vocab[words[j]]
                     # Negative sampling
                     c_neg = []
                     for _ in range(k):
@@ -64,18 +64,19 @@ def _create_learning_file(
                         while neg_word == word or neg_word in word_except:
                             neg_word = random.choice(vocab_list)
                         neg_context_word = vocab[neg_word]
-                        c_neg.append(neg_context_word)
+                        c_neg.append(neg_context_word[0])
 
-                    training_data.append((target_word[0], vocab[word[j]], c_neg))
+                    training_data.append((target_word[0], context_word_idx[0], *c_neg))
+
     return training_data
 
 
 def get_embedding(
-    text_path: str,
-    word_except: list,
-    L: int,
-    k: int,
-    minc: int = 1
+        text_path: str,
+        word_except: list,
+        L: int,
+        k: int,
+        minc: int = 1
 ):
     text = get_text(text_path)
     vocab = _create_vocabulary(text)
@@ -87,8 +88,6 @@ def get_embedding(
     target = [line[2] for line in embeddings]
     for element in vocab.keys():
         print(vocab.get(element)[0])
-
-
 
 
 '''
@@ -198,10 +197,9 @@ def _create_neg_context(
 
 
 def _get_c_neg(
-    vocab: dict,
-    k: int,
-    occurrences: set,
-    word_except: list
+        vocab: dict,
+        k: int,
+        occurrences: set,
+        word_except: list
 ):
     neg_context = []
-    
