@@ -11,7 +11,7 @@ def get_text(text_path: str) -> list[str]:
 
 def sigmoid(
         z: np.ndarray,
-) -> float:
+) -> np.ndarray:
     return 1 / (1 + np.exp(-z))
 
 

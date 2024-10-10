@@ -35,12 +35,13 @@ def generate_embeddings_file(
 
 
 def _create_learning_file(
-        text: list,
+        text_path: str,
         L: int,
         k: int,
         word_except: list,
         minc: int
 ) -> list:
+    text = get_text(text_path)
     vocab = _create_vocabulary(text)
     training_data = []
     vocab_list = list(vocab.keys())
@@ -66,7 +67,7 @@ def _create_learning_file(
                         neg_context_word = vocab[neg_word]
                         c_neg.append(neg_context_word[0])
 
-                    training_data.append((target_word[0], context_word_idx[0], *c_neg))
+                    training_data.append(np.array([target_word[0], context_word_idx[0], *c_neg]))
 
     return training_data
 
