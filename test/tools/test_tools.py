@@ -90,7 +90,7 @@ class TestTools(TestCase):
         sentence = ["<s> <s> ce chat aime un autre chat ce chat ce </s> </s>"]
         word_except = ['<s>', '</s>']
 
-        context = w2v_tools._create_learning_file(sentence, 2, 3, word_except, 3)
+        context = w2v_tools._create_learning_file(sentence, 2, 3, word_except, 1)
         print(context)
 
     def test_generate_embeddings_file(self):
