@@ -41,7 +41,7 @@ def _create_learning_file(
         word_except: list,
         minc: int
 ) -> list:
-    vocab = _create_vocabulary(text, minc)
+    vocab = _create_vocabulary(text, minc, word_except)
     training_data = []
     vocab_list = list(vocab.keys())
     for sentence in text:
@@ -104,14 +104,16 @@ def get_embedding(
 
 def _create_vocabulary(
         text: list,
-        minc: int
+        minc: int,
+        word_except: list
 ) -> dict:
     word_counts = defaultdict(int)
     for sentence in text:
         for word in sentence.split():
             word_counts[word] += 1
-        vocab = {word: (idx, count) for idx, (word, count) in enumerate(word_counts.items()) if count >= minc}
-    return vocab
+        vocab = {word: (idx, count) for idx, (word, count) in enumerate(word_counts.items()) if count >= minc and word not in word_except}
+        reindexed_vocab = {word: (new_idx, count) for new_idx, (word, (_, count)) in enumerate(vocab.items())}
+    return reindexed_vocab
 
 
 def _get_occurrences(

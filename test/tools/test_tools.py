@@ -21,9 +21,10 @@ class TestTools(TestCase):
 
     def test_create_vocabulary2(self):
         print("TEST test_create_vocabulary")
-        sentence = ["<s> <s> Ce chat aime un autre chat </s> </s>"]
+        sentence = ["<s> <s> ce chat aime un autre chat ce chat ce chat </s> </s>"]
+        word_except = ['<s>', '</s>']
 
-        vocab = w2v_tools._create_vocabulary(sentence, 2)
+        vocab = w2v_tools._create_vocabulary(sentence, 2, word_except)
         print(vocab)
 
     def test_get_word_occurrence(self):
@@ -86,10 +87,10 @@ class TestTools(TestCase):
 
 
     def test_context(self):
-        sentence = ["<s> <s> Ce chat aime un autre chat </s> </s>"]
+        sentence = ["<s> <s> ce chat aime un autre chat ce chat ce </s> </s>"]
         word_except = ['<s>', '</s>']
 
-        context = w2v_tools._create_learning_file(sentence, 2, 3, word_except, 1)
+        context = w2v_tools._create_learning_file(sentence, 2, 3, word_except, 3)
         print(context)
 
     def test_generate_embeddings_file(self):
