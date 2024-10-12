@@ -1,14 +1,19 @@
+""" This script contains different function for create embedding
+.module author:: Marius THORRE
+"""
+
 import random
 from collections import defaultdict
 from static_token_div.tools.tools import get_text
 
+
 def embedding_generator(
-    saving_path: str,
-    text_path: str,
-    L: int,
-    k: int,
-    minc: int,
-    word_except: list,
+        saving_path: str,
+        text_path: str,
+        L: int,
+        k: int,
+        minc: int,
+        word_except: list,
 
 ) -> None:
     """
@@ -37,6 +42,16 @@ def _create_context(
         word_except: list,
         minc: int
 ) -> list:
+    """
+    This function create positive and negative context from target
+    :param text: list of sentences
+    :param vocab: vocab of current text
+    :param L: size oh embedding
+    :param k: nb of negative context
+    :param word_except: word except won't be appear in process
+    :param minc: minimal occurrences step for each word in text
+    :return: list of contexts
+    """
     training_data = []
     vocab_list = list(vocab.keys())
 
@@ -67,21 +82,33 @@ def _create_context(
 
 
 def _generate_training_data(
-    context: list,
-    training_path: str,
+        context: list,
+        training_path: str,
 
-):
+) -> None:
+    """
+    Generate training file
+    :param context: list of context
+    :param training_path: string of training path
+    :return: None
+    """
     to_save = ""
     for data in context:
         to_save += str(data[0]) + " " + str(data[1]) + " " + str(data[2]) + "\n"
 
-    with open(training_path, "w", encoding='utf-8') as f2:
-        f2.write(to_save)
+    with open(training_path, "w", encoding='utf-8') as f:
+        f.write(to_save)
 
 
 def _create_vocabulary(
         text: list
 ) -> dict:
+    """
+    Function which create vocabulary
+    :param text: list of string which contains text
+    :return: dict <key, value> where key is word in vocab and value his div
+    """
+    vocab = {}
     word_counts = defaultdict(int)
     for sentence in text:
         for word in sentence.split():

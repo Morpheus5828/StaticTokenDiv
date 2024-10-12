@@ -1,48 +1,30 @@
 import numpy as np
 import random
 from collections import defaultdict
-from static_token_div.tools.tools import get_text, sigmoid
+from static_token_div.tools.tools import get_text
 
 
-# TODO marche pas
-def generate_embeddings_file(
-        text_path: str,
-        save_path: str,
-        word_except: list,
-        L: int,
-        k: int,
-        minc: int = 1
-):
-    text = get_text(text_path)
-    vocab = _create_vocabulary(text)
-    print(f"\tInitial vocab size: {len(vocab)}")
-    occurrences = _get_occurrences(text, vocab, minc)
-    print(f"\tNew vocab size: {len(occurrences)} after skip minc")
-    embeddings = _create_embeddings(text, vocab, occurrences, L, word_except)
-    pos_context = _create_pos_context(embeddings, vocab, occurrences, L, word_except)
-    neg_context = _create_neg_context(pos_context, vocab, k, occurrences, word_except)
-    to_save = ""
-    print(f"\tNb lines: {len(pos_context) * len(neg_context) * len(occurrences)}")
-    print("\tStart writing file ...")
-    for main_word in pos_context.keys():
-        for pos_word in pos_context.get(main_word):
-            for neg_word in neg_context.get(main_word):
-                to_save += str(main_word) + " " + str(pos_word) + str(neg_word)
-
-    print(f"\tFile contains: {len(embeddings)} lines")
-    with open(save_path, "w", encoding='utf-8') as f2:
-        f2.write("coucou")
-
-
-def _create_learning_file(
+def create_learning_file(
         text_path: str,
         L: int,
         k: int,
         word_except: list,
         minc: int
 ) -> list:
+    """
+    This scipt create learning file for Word2Vec algorithm
+    :param text_path: text path string
+    :param L: embedding size
+    :param k: number of negative context
+    :param word_except: list of word exceptions
+    :param minc: minimal occurrence word
+    :return: list of string
+    """
+
     text = get_text(text_path)
-    vocab = _create_vocabulary(text, minc)
+
+    vocab = create_vocabulary(text, minc, word_except)
+
     training_data = []
     vocab_list = list(vocab.keys())
     for sentence in text:
@@ -72,16 +54,26 @@ def _create_learning_file(
     return training_data
 
 
-def _create_vocabulary(
+def create_vocabulary(
         text: list,
-        minc: int
+        minc: int,
+        word_except: list
 ) -> dict:
+    """
+    Create vocabulary from a text
+    :param text: list of string
+    :param word_except: list of word exceptions
+    :param minc: minimal occurrence word
+    :return: vocab with only word accept when minc and word except conditions are true
+    """
     word_counts = defaultdict(int)
+    reindexed_vocab = {}
     for sentence in text:
         for word in sentence.split():
             word_counts[word] += 1
-        vocab = {word: (idx, count) for idx, (word, count) in enumerate(word_counts.items()) if count >= minc}
-    return vocab
+        vocab = {word: (idx, count) for idx, (word, count) in enumerate(word_counts.items()) if count >= minc and word not in word_except}
+        reindexed_vocab = {word: (new_idx, count) for new_idx, (word, (_, count)) in enumerate(vocab.items())}
+    return reindexed_vocab
 
 
 def _get_occurrences(
@@ -89,26 +81,43 @@ def _get_occurrences(
         vocab: dict,
         minc: int
 ) -> set:
-    occurences = set()
+    """
+    Getter to have occurrence of each word
+    :param text: list of word
+    :param vocab: vocab dict
+    :param minc: minimal occurrence word
+    :return: set with occurrences
+    """
+
+    occurrences = set()
     for word in vocab:
         if text.count(word) >= minc:
-            occurences.add(word)
+            occurrences.add(word)
 
-    return occurences
+    return occurrences
 
 
 def _create_embeddings(
         text: list,
         vocab: dict,
-        occurences: set,
+        occurrences: set,
         L: int,
         word_except: list
 ) -> list:
+    """
+    This file create embedding
+    :param text: text string
+    :param vocab: vocab from text
+    :param occurrences: set occurrences
+    :param L: size of embedding
+    :param word_except: list of word exceptions
+    :return: list of embeddings
+    """
     all_embedding = []
 
     index = 0
     for word in text:
-        if word not in word_except and word in occurences:
+        if word not in word_except and word in occurrences:
             current_embedding = []
             for i in range(-L, L + 1):
                 try:
@@ -128,6 +137,15 @@ def _create_pos_context(
         L: int,
         word_except: list
 ) -> dict[int | set]:
+    """
+    Create positive context
+    :param embeddings: list of embeddings
+    :param vocab: vocab from text
+    :param occurrences: set of occurrences
+    :param L: embedding size
+    :param word_except: list of word exceptions
+    :return: dict <key, value> key is word and value his context
+    """
     pos_context = {}
     for unique_word in vocab:
         if unique_word in occurrences and unique_word not in word_except:
@@ -149,6 +167,15 @@ def _create_neg_context(
         occurrences: set,
         word_except: list
 ) -> dict[int | set]:
+    """
+    Create negative context
+    :param pos_context: dict of positive context
+    :param vocab: vocab from text
+    :param k: number of c_neg to generate
+    :param occurrences: set of occurrences
+    :param word_except: list of word exceptions
+    :return: dict <key, value> key is word and value set of c_neg
+    """
     neg_context = {}
     for unique_word in vocab:
         if unique_word in occurrences and unique_word not in word_except:
@@ -167,10 +194,4 @@ def _create_neg_context(
     return neg_context
 
 
-def _get_c_neg(
-        vocab: dict,
-        k: int,
-        occurrences: set,
-        word_except: list
-):
-    neg_context = []
+

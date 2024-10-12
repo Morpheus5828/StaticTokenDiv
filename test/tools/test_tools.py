@@ -1,107 +1,57 @@
 from unittest import TestCase
-from static_token_div.tools import tools
-from static_token_div.tools import w2v_tools
-import time
+import static_token_div.tools.tools as tools
+import numpy as np
 
 
 class TestTools(TestCase):
-    def test_create_text(self):
+    def test_get_text(self):
         print("TEST test_create_text")
         text_path = "../../resources/tlnl_tp1_data/alexandre_dumas/Le_comte_de_Monte_Cristo.tok"
-        text = tools._get_text(text_path)
-        print(text[0])
+        text = tools.get_text(text_path)
+        self.assertTrue(len(text) == 9512)
 
-    def test_create_vocabulary(self):
-        print("TEST test_create_vocabulary")
-        sentence = ['<s>', '<s>', 'Ce', 'chat', 'aime', 'un', 'autre', 'chat', '</s>', '</s>']
-        vocab = tools.create_vocabulary(sentence)
-        self.assertTrue(vocab["<s>"] == 0)
-        self.assertTrue(vocab["</s>"] == 6)
-        self.assertTrue(vocab["chat"] == 2)
+    def test_sigmoid(self):
+        print("TEST test_sigmoid")
+        input_data = np.array([0, 2, -2])
+        expected_output = np.array([0.5, 0.88079708, 0.11920292])
+        result = tools.sigmoid(input_data)
+        np.testing.assert_almost_equal(result, expected_output, decimal=7)
 
-    def test_create_vocabulary2(self):
-        print("TEST test_create_vocabulary")
-        sentence = ["<s> <s> Ce chat aime un autre chat </s> </s>"]
+    def test_safe_log(self):
+        print("TEST test_safe_log")
+        input_data = np.array([1.0, 0.1, 1e-12, 0.0])
+        expected_output = np.log(np.clip(input_data, 1e-10, 1.0))
+        result = tools._safe_log(input_data)
+        np.testing.assert_almost_equal(result, expected_output, decimal=10)
 
-        vocab = w2v_tools._create_vocabulary(sentence, 2)
-        print(vocab)
+    def test_loss_function(self):
+        print("TEST test_loss_function")
+        m = np.array([0.5, -0.2])
+        c_pos = np.array([0.4, 0.6])
+        c_neg = np.array([[-0.1, 0.7], [0.8, -0.5]])
 
-    def test_get_word_occurrence(self):
-        print("TEST test_get_word_occurrence")
-        sentence = ['<s>', '<s>', 'Ce', 'chat', 'aime', 'un', 'autre', 'chat', '</s>', '</s>']
-        vocab = tools.create_vocabulary(sentence)
-        occurrences = tools.get_occurrences(sentence, vocab, 1)
+        pos_loss = tools._safe_log(tools.sigmoid(np.dot(m, c_pos)))
+        neg_loss = np.sum(np.log(tools.sigmoid(-np.dot(m, c_neg.T))))
+        expected_loss = -(pos_loss + neg_loss)
 
-        self.assertTrue("chat" in occurrences)
-        self.assertTrue("un" in occurrences)
+        result = tools.loss_function(m, c_pos, c_neg)
+        self.assertAlmostEqual(result, expected_loss, places=6)
 
-        occurrences = tools.get_occurrences(sentence, vocab, 2)
+    def test_cosine_similarity(self):
+        print("TEST test_cosine_similarity")
+        v1 = np.array([1, 0, 0])
+        v2 = np.array([0, 1, 0])
+        expected_output = 0.0
+        result = tools.cosine_similarity(v1, v2)
+        self.assertAlmostEqual(result, expected_output, places=6)
 
-        self.assertTrue("chat" in occurrences)
-        self.assertTrue("un" not in occurrences)
-
-    def test_embedding_sentence(self):
-        print("TEST test_embedding_sentence")
-        print("\tStarting embedding creation extraction process ...")
-
-        print("TEST test_get_word_occurrence")
-        sentence = ['<s>', '<s>', 'Ce', 'chat', 'aime', 'un', 'autre', 'chat', '</s>', '</s>']
-        vocab = tools.create_vocabulary(sentence)
-        occurrences = tools.get_occurrences(sentence, vocab, 1)
-        embeddings = tools.create_embeddings(sentence, vocab, occurrences, 2, word_except=['<s>', '</s>'])
-
-        self.assertTrue(embeddings[0] == [0, 0, 1, 2, 3])
-        self.assertTrue(embeddings[-1] == [4, 5, 2, 6, 6])
-
-    def test_break_list_for_txt(self):
-        sentence = ['février', '1815', ',', 'la', 'vigie']
-
-        result = tools.break_list_for_txt(sentence)
-        self.assertTrue(result == "février 1815 , la vigie")
-
-    def test_pos_context(self):
-        sentence = ['<s>', '<s>', 'Ce', 'chat', 'aime', 'un', 'autre', 'chat', '</s>', '</s>']
-        word_except = ['<s>', '</s>']
-        vocab = tools.create_vocabulary(sentence)
-        occurrences = tools.get_occurrences(sentence, vocab, 1)
-        embeddings = tools.create_embeddings(sentence, vocab, occurrences, 2, word_except)
-        pos_context = tools.create_pos_context(embeddings, vocab, occurrences, 2, word_except)
-
-        self.assertTrue(pos_context.get(1) == {0, 2, 3})
-        self.assertTrue(pos_context.get(2) == {0, 1, 3, 4, 5, 6})
-        self.assertTrue(pos_context.get(5) == {3, 4, 2, 6})
-
-    def test_neg_context(self):
-        sentence = ['<s>', '<s>', 'Ce', 'chat', 'aime', 'un', 'autre', 'chat', '</s>', '</s>']
-        word_except = ['<s>', '</s>']
-        vocab = tools.create_vocabulary(sentence)
-        occurrences = tools.get_occurrences(sentence, vocab, 1)
-        embeddings = tools.create_embeddings(sentence, vocab, occurrences, 2, word_except)
-        pos_context = tools.create_pos_context(embeddings, vocab, occurrences, 2, word_except)
-        neg_context = tools.create_neg_context(pos_context, vocab, 1, occurrences, word_except)
-
-        self.assertTrue(len(neg_context.get(1)) == 3)
-        self.assertTrue(len(neg_context.get(2)) == 1)
-        self.assertTrue(len(neg_context.get(4)) == 3)
+        v3 = np.array([1, 2, 3])
+        v4 = np.array([1, 2, 3])
+        expected_output = 1.0
+        result = tools.cosine_similarity(v3, v4)
+        self.assertAlmostEqual(result, expected_output, places=6)
 
 
-    def test_context(self):
-        sentence = ["<s> <s> Ce chat aime un autre chat </s> </s>"]
-        word_except = ['<s>', '</s>']
 
-        context = w2v_tools._create_learning_file(sentence, 2, 3, word_except, 1)
-        print(context)
 
-    def test_generate_embeddings_file(self):
-        sentence = ['<s>', '<s>', 'Ce', 'chat', 'aime', 'un', 'autre', 'chat', '</s>', '</s>']
-        word_except = ['<s>', '</s>']
-        # vocab = tools.create_vocabulary(sentence)
-        # occurrences = tools.get_occurrences(sentence, vocab, 1)
-        # embeddings = tools.create_embeddings(sentence, vocab, occurrences, 2, word_except)
-        # pos_context = tools.create_pos_context(embeddings, vocab, occurrences, 2, word_except)
-        # neg_context = tools.create_neg_context(pos_context, vocab, 1, occurrences, word_except)
-        tools.generate_embeddings_file(sentence, "test.txt", word_except)
 
-    def test_extract(self):
-        df = tools.extract_embeddings_data("../../static_token_div/learning/learning_file.txt")
-        print(df.columns)
