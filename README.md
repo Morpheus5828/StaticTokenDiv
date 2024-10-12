@@ -21,11 +21,11 @@ pip3 install torch torchvision torchaudio --index-url https://download.pytorch.o
 ## Demos files
 
 ```shell
-python demos/demos_create_embedding.py
+python .\demos\demo_create_embedding.py
 ```
 
 ```shell
-python demos/demos_word2vec.py
+python .\demos\demos_word2vec.py
 ```
 
 ## Authors
