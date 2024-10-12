@@ -2,13 +2,21 @@
 .module author:: Marius THORRE
 """
 
+import os
+import sys
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_path = os.path.abspath(os.path.join(current_dir, '../'))
+if project_path not in sys.path:
+    sys.path.append(project_path)
+
 import static_token_div.algorithms.w2v as w2v
 import static_token_div.eval.eval_w2v as eval_w2v
 import time
 
-text_path = "../resources/tlnl_tp1_data/alexandre_dumas/Le_comte_de_Monte_Cristo.tok"
-triplet_file = "../resources/tlnl_tp1_data/alexandre_dumas/Le_comte_de_Monte_Cristo.100.sim.txt"
-embedding_path = "embedding.txt"
+text_path = os.path.join(project_path, "resources/tlnl_tp1_data/alexandre_dumas/Le_comte_de_Monte_Cristo.tok")
+triplet_file = os.path.join(project_path, "resources/tlnl_tp1_data/alexandre_dumas/Le_comte_de_Monte_Cristo.100.sim.txt")
+embedding_path = os.path.join(project_path, "embedding.txt")
 word_except = ["<s>", "</s>"]
 
 start = time.time()

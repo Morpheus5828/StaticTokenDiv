@@ -2,11 +2,19 @@
 .module author:: Marius THORRE
 """
 
+import os
+import sys
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_path = os.path.abspath(os.path.join(current_dir, '../'))
+if project_path not in sys.path:
+    sys.path.append(project_path)
+
 from static_token_div.tools.embedding_tools import embedding_generator
 import time
 
-text_path = "../resources/tlnl_tp1_data/alexandre_dumas/Le_comte_de_Monte_Cristo.tok"
-learning_path = "../static_token_div/learning_file.txt"
+text_path = os.path.join(project_path, "resources/tlnl_tp1_data/alexandre_dumas/Le_comte_de_Monte_Cristo.tok")
+learning_path = os.path.join(project_path, "../static_token_div/learning_file.txt")
 
 L = 2  # number of positive and negative word context between target word
 k = 10  # number of neg context for 1 pos context
