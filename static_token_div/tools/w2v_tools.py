@@ -30,7 +30,7 @@ def create_learning_file(
     for sentence in text:
         words = sentence.split()
         for i, word in enumerate(words):
-            if word not in vocab or word in word_except:
+            if word not in vocab:
                 continue
             target_word = vocab[word]
             # Positive context words
@@ -38,7 +38,7 @@ def create_learning_file(
             pos_context_indices.remove(i)
 
             for j in pos_context_indices:
-                if words[j] in vocab and words[j] not in word_except:
+                if words[j] in vocab:
                     context_word_idx = vocab[words[j]]
                     # Negative sampling
                     c_neg = []
