@@ -7,7 +7,7 @@ class Vocab:
         self.dico_voca = {}
         self.word_array = []
         if "emb_filename" in kwargs:
-            with open(kwargs["emb_filename"], 'r') as fi:
+            with open(kwargs["emb_filename"], 'r', encoding="utf-8") as fi:
                 ligne = fi.readline()
                 ligne = ligne.strip()
                 (self.vocab_size, self.emb_dim) = map(int, ligne.split(" "))

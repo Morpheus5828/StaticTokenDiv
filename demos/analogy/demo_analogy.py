@@ -1,5 +1,5 @@
 """ This script is a demo file to watch Embedding myth in section 3.2 of the report.
-But on many example, store in resource/analogies.txt file.
+But on many example, store in resource/analogies.txt.txt file.
 .module author:: Marius THORRE
 """
 
@@ -11,11 +11,11 @@ if project_path not in sys.path:
     sys.path.append(project_path)
 
 from static_token_div.eval.eval_analogy import Embedding
-analogie_path = os.path.join(project_path, "resources/analogies.txt")
+analogie_path = os.path.join(project_path, "resources/analogies.txt.txt")
 eval_path = os.path.join(project_path, "resources/model.txt")
 
 
-print(f"\n\tExtract analogies from storage file: {analogie_path}")
+print(f"\n\tExtract analogies.txt from storage file: {analogie_path}")
 print("\tPlease hold it'can take few moment :-)")
 
 with open(analogie_path, "r", encoding="utf8") as f:

@@ -1,4 +1,4 @@
-""" This script is Word2Vec evaluation file
+""" This script is Word2Vec evaluation.txt file
 .module author:: Marius THORRE
 """
 
