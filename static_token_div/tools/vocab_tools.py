@@ -7,7 +7,7 @@ class Vocab:
         self.dico_voca = {}
         self.word_array = []
         if "emb_filename" in kwargs:
-            with open(kwargs["emb_filename"], 'r', encoding="utf-8") as fi:
+            with open(kwargs["emb_filename"], 'r') as fi:
                 ligne = fi.readline()
                 ligne = ligne.strip()
                 (self.vocab_size, self.emb_dim) = map(int, ligne.split(" "))
@@ -65,7 +65,6 @@ class Vocab:
         return self.matrice[indice_mot]
 
     def get_one_hot(self, mot):
-        print(self.dico_voca)
         vect = torch.zeros(len(self.dico_voca))
         vect[self.dico_voca[mot]] = 1
         return vect

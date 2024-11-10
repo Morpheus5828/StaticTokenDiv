@@ -3,6 +3,12 @@ import random
 from static_token_div.tools.tools import get_text
 from static_token_div.tools.embedding_tools import create_vocabulary
 
+def vocab_idx(vocab):
+    new_vocab = {}
+    for word in vocab.keys():
+        new_vocab[vocab[word][0]] = word
+    return new_vocab
+
 
 def create_learning_file(
     text_path: str,
@@ -11,7 +17,7 @@ def create_learning_file(
     word_except: list,
     minc: int,
     optmim_random_choice: bool = False
-) -> list:
+) -> tuple:
     """
     This script creates a learning file for the Word2Vec algorithm.
     """
@@ -57,7 +63,7 @@ def create_learning_file(
                         c_neg.append(neg_context_word[0])
                     training_data.append(np.array([target_word[0], context_word_idx[0], *c_neg]))
 
-    return training_data
+    return training_data, vocab_idx(vocab)
 
 
 def _get_occurrences(
