@@ -16,7 +16,7 @@ import time
 
 text_path = os.path.join(project_path, "resources/tlnl_tp1_data/alexandre_dumas/Le_comte_de_Monte_Cristo.tok")
 triplet_file = os.path.join(project_path, "resources/evaluation.txt")
-embedding_path = os.path.join(project_path, "demos/embedding.txt")
+embedding_path = os.path.join(project_path, "demos/emb_filename.txt")
 
 start = time.time()
 
@@ -25,7 +25,7 @@ L = 2
 minc = 5
 word_except = ["<s>", "</s>"]
 learning_rate = 0.01
-nb_iterations = 10
+nb_iterations = 5
 early_stop = 2
 embedding_dim = 100
 

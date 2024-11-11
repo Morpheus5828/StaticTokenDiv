@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 
 text_path = os.path.join(project_path, "resources/tlnl_tp1_data/alexandre_dumas/Le_comte_de_Monte_Cristo.tok")
 triplet_file = os.path.join(project_path, "resources/tlnl_tp1_data/alexandre_dumas/Le_comte_de_Monte_Cristo.100.sim.txt")
-embedding_path = os.path.join(project_path, "embedding.txt")
+embedding_path = os.path.join(project_path, "emb_filename.txt")
 
 start = time.time()
 

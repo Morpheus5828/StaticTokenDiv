@@ -82,14 +82,20 @@ def word2vec(
 
     if save_embedding_file:
         # 3 save W
-        with open(embedding_path, 'w', encoding="utf-8") as f:
-            f.write(f"{W.shape[0]} {embedding_dim}\n")
-            for idx, embedding in enumerate(W):
-                if idx in vocab.keys():
-                    embedding_str = ' '.join(map(str, embedding))
-                    f.write(f"{vocab[idx]} {embedding_str}\n")
+        result_to_save = ""
+        nb_word = 0
 
-        print("\tEmbeddings saved to 'embedding.txt'")
+        for idx, embedding in enumerate(W):
+            if idx in vocab.keys():
+                embedding_str = ' '.join(map(str, embedding))
+                result_to_save += vocab[idx] + " " + embedding_str + "\n"
+                nb_word += 1
+
+        with open(embedding_path, 'w', encoding="utf-8") as f:
+            f.write(f"{nb_word} {embedding_dim}\n")
+            f.write(result_to_save)
+
+        print("\tEmbeddings saved to 'emb_filename.txt'")
     else:
         result = ""
         for idx, embedding in enumerate(W):

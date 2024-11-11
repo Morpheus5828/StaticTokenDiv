@@ -23,7 +23,7 @@ t5 = os.path.join(project_path, "resources/tlnl_tp1_data/alexandre_dumas/Vingt_a
 all_text = [t1, t2, t3, t4, t5]
 
 triplet_file = os.path.join(project_path, "resources/evaluation.txt")
-embedding_path = os.path.join(project_path, "demos/embedding.txt")
+embedding_path = os.path.join(project_path, "demos/emb_filename.txt")
 
 start = time.time()
 
@@ -51,21 +51,17 @@ for idx, t in enumerate(all_text):
         embedding_dim=embedding_dim,
         nb_iterations=nb_iterations,
         optmim_random_choice=True,
-        early_stop=early_stop,
-        save_embedding_file=False
+        early_stop=early_stop
     )
-    all_embedding += current_embedding
 
     score = eval_w2v.evaluation(
         text_path=t,
-        embedding_file=embedding_path,
+        embedding_file=os.path.join(embedding_path, f"t_{idx}"),
         triplet_file=triplet_file,
         minc=minc,
         word_except=word_except
     )
 
-with open(embedding_path, 'w', encoding="utf-8") as f:
-    f.write(all_embedding)
 
 end = time.time()
 
