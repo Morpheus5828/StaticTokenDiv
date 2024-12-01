@@ -1,4 +1,4 @@
-""" This script is Fastest evaluation file
+""" This script is Fastest evaluation.txt file
 .module author:: Marius THORRE
 """
 

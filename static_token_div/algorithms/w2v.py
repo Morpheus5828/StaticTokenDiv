@@ -19,14 +19,15 @@ def word2vec(
     embedding_dim: int,
     nb_iterations: int = 10,
     optmim_random_choice: bool = False,
-    early_stop: int = 1
-) -> None:
+    early_stop: int = 1,
+    save_embedding_file: bool = True
+):
 
     print("\tStart data extraction ...")
     print("\tPlease hold on, it can take few moments :-)")
 
     # 1. Extract data
-    data = create_learning_file(
+    data, vocab = create_learning_file(
         text_path=text_path,
         word_except=word_except,
         k=k,
@@ -79,13 +80,27 @@ def word2vec(
         losses.append(current_losses)
         print(f"\t Iteration: {i+1}/{nb_iterations}, loss: {losses[i]}")
 
-    # 3 save W
-    with open(embedding_path, 'w') as f:
-        f.write(f"{W.shape[0]} {embedding_dim}\n")
+    if save_embedding_file:
+        # 3 save W
+        result_to_save = ""
+        nb_word = 0
 
         for idx, embedding in enumerate(W):
-            embedding_str = ' '.join(map(str, embedding))
-            f.write(f"{idx} {embedding_str}\n")
+            if idx in vocab.keys():
+                embedding_str = ' '.join(map(str, embedding))
+                result_to_save += vocab[idx] + " " + embedding_str + "\n"
+                nb_word += 1
 
-    print("\tEmbeddings saved to 'embedding.txt'")
+        with open(embedding_path, 'w', encoding="utf-8") as f:
+            f.write(f"{nb_word} {embedding_dim}\n")
+            f.write(result_to_save)
+
+        print("\tEmbeddings saved to 'emb_filename.txt'")
+    else:
+        result = ""
+        for idx, embedding in enumerate(W):
+            if idx in vocab.keys():
+                embedding_str = ' '.join(map(str, embedding))
+                result += f"{vocab[idx]} {embedding_str}\n"
+        return result
 

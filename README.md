@@ -19,20 +19,30 @@ pip install -r requirements.txt
 pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 ```
 
-## Demos files
+## Resource files
+Unzip resource folder before start demos:
+```shell
+tar -xvzf "./resources/tlnl_tp1_data.tgz" -C "./resources"
+```
+
+## Demos files of Project 1 (Word2Vec)
 
 ```shell
 python .\demos\demo_create_embedding.py
 ```
 
 ```shell
-python .\demos\demos_word2vec.py
+python .\demos\word2vec\demos_word2vec.py
 ```
 To use analogy demo, you need to install folder number 43 in this url <a href="http://vectors.nlpl.eu/repository" target="_blanck">Click here</a> and store it into <br>
 resources folder, extract zip file and rename it model.txt
 ```shell
 python .\demos\analogy\demos_analogy.py
 ```
+
+## Demos files of Project 2 (MLP Generative AI)
+
+
 
 ## Authors
 
