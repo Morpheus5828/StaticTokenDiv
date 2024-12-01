@@ -25,11 +25,10 @@ class Vocab:
                         self.matrice[indice_mot, i - 1] = float(splitted_ligne[i])
                     indice_mot += 1
                     ligne = fi.readline().strip()
-            print(len(self.dico_voca))
         else:
             fichier_corpus = kwargs["corpus_filename"]
             self.emb_dim = kwargs["emb_dim"]
-            nb_tokens = 1  # Initialisé à 1 pour tenir compte de <unk>
+            nb_tokens = 1
             with open(fichier_corpus, 'r', encoding="utf-8") as fi:
                 for line in fi:
                     tokens = line.rstrip().split(" ")

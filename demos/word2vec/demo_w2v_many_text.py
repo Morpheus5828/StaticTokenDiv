@@ -42,7 +42,7 @@ for idx, t in enumerate(all_text):
 
     current_embedding = w2v.word2vec(
         text_path=t,
-        embedding_path=os.path.join(embedding_path, f"t_{idx}"),
+        embedding_path=os.path.join(project_path, f"embedding_t_{idx}.txt"),
         k=k,
         L=L,
         minc=minc,
@@ -50,13 +50,13 @@ for idx, t in enumerate(all_text):
         learning_rate=learning_rate,
         embedding_dim=embedding_dim,
         nb_iterations=nb_iterations,
-        optmim_random_choice=True,
+        optmim_random_choice=False,
         early_stop=early_stop
     )
 
     score = eval_w2v.evaluation(
         text_path=t,
-        embedding_file=os.path.join(embedding_path, f"t_{idx}"),
+        embedding_file=os.path.join(project_path, f"embedding_t_{idx}.txt"),
         triplet_file=triplet_file,
         minc=minc,
         word_except=word_except

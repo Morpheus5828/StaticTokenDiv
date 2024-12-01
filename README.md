@@ -25,7 +25,7 @@ Unzip resource folder before start demos:
 tar -xvzf "./resources/tlnl_tp1_data.tgz" -C "./resources"
 ```
 
-## Demos files
+## Demos files of Project 1 (Word2Vec)
 
 ```shell
 python .\demos\demo_create_embedding.py
@@ -39,6 +39,10 @@ resources folder, extract zip file and rename it model.txt
 ```shell
 python .\demos\analogy\demos_analogy.py
 ```
+
+## Demos files of Project 2 (MLP Generative AI)
+
+
 
 ## Authors
 
