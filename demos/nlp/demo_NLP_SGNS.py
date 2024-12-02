@@ -6,10 +6,10 @@ import torch
 import torch.nn as nn
 import os, sys
 import matplotlib.pyplot as plt
-module_path = os.path.abspath(os.path.join('../..'))
-
-if module_path not in sys.path:
-    sys.path.append(module_path)
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_path = os.path.abspath(os.path.join(current_dir, '../../'))
+if project_path not in sys.path:
+    sys.path.append(project_path)
 
 import static_token_div.learning.preprocessing as preprocessing
 import static_token_div.learning.learning as learning
@@ -18,8 +18,8 @@ from static_token_div.eval.eval_learning import compute_perplexity
 import static_token_div.tools.vocab_tools as vocab_tools
 
 
-corpus_path = os.path.join("../../resources/tlnl_tp1_data/alexandre_dumas/fusion.txt")
-embedding_path = os.path.join("fusion_emb_filename.txt")
+corpus_path = os.path.join(project_path, "resources/tlnl_tp1_data/alexandre_dumas/fusion.txt")
+embedding_path = os.path.join(project_path, "demos/nlp/fusion_emb_filename.txt")
 vocab = vocab_tools.Vocab(emb_filename=embedding_path)
 
 
@@ -93,7 +93,7 @@ if __name__ == "__main__":
     # 6 Save model
     print(f"\t 6. Save model at ./nlp_SGNS_model")
     model = model.to('cpu')
-    torch.save(model.state_dict(), "NLP_SGNS_perplexity_fusion.pth")
+    torch.save(model.state_dict(), "nlp_sgns_fusion.pth")
 
 
 

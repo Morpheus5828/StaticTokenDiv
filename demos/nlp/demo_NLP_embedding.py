@@ -114,7 +114,7 @@ if __name__ == "__main__":
     # 6. Save model
     print(f"\t 6. Save model at ./nlp_embedding_model_fusion")
     model = model.to('cpu')
-    torch.save(model.state_dict(), "nlp_embedding_model_fusion.pth")
+    torch.save(model.state_dict(), "../../resources/nlp_embedding_model_fusion.pth")
 
 
 

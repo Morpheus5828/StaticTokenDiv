@@ -25,6 +25,7 @@ Unzip resource folder before start demos:
 tar -xvzf "./resources/tlnl_tp1_data.tgz" -C "./resources"
 ```
 
+
 ## Demos files of Project 1 (Word2Vec)
 
 ```shell
@@ -32,15 +33,32 @@ python .\demos\demo_create_embedding.py
 ```
 
 ```shell
-python .\demos\word2vec\demos_word2vec.py
+python .\demos\word2vec\demo_w2v.py
 ```
 To use analogy demo, you need to install folder number 43 in this url <a href="http://vectors.nlpl.eu/repository" target="_blanck">Click here</a> and store it into <br>
 resources folder, extract zip file and rename it model.txt
 ```shell
-python .\demos\analogy\demos_analogy.py
+python .\demos\analogy\demo_analogy.py
 ```
 
 ## Demos files of Project 2 (MLP Generative AI)
+
+```shell
+python .\demos\nlp\demo_NLP_SGNS.py
+```
+
+```shell
+python .\demos\nlp\demo_NLP_embedding.py
+```
+
+For text generation:
+
+```shell
+python .\demos\nlp\demo_text_generator.py
+```
+
+
+
 
 
 
